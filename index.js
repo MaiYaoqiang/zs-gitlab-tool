@@ -122,15 +122,13 @@ async function checkBranchMerged(gitlab, projectId, sourceBranch, targetBranch) 
 // 检查是否有冲突
 async function checkMergeConflicts(gitlab, projectId, sourceBranch, targetBranch) {
     try {
-        await gitlab.MergeRequests.create(projectId, {
-            source_branch: sourceBranch,
-            target_branch: targetBranch,
-            title: 'Temporary MR for conflict checking',
+        await gitlab.MergeRequests.create(projectId, sourceBranch,targetBranch,'Temporary MR for conflict checking',{
             dry_run: true, // 仅模拟合并请求，不实际创建
         });
         console.log(`✅ ${sourceBranch} 和 ${targetBranch}无冲突`);
         return false;
     } catch (error) {
+        console.log(error)
         if (error.response?.data?.message === 'This merge request cannot be merged') {
             console.log(`❗️ ${sourceBranch} 和 ${targetBranch}存在冲突`);
             return true;
@@ -153,6 +151,9 @@ async function getMainBranchFromGitLab() {
     }
 }
 
+const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+};
 // 定义轮询查询的函数
 async function checkMergeStatus(mergeRequestIid) {
     const maxRetries = 10; // 最大轮询次数
@@ -179,7 +180,8 @@ async function checkMergeStatus(mergeRequestIid) {
             // 如果没有达到最大轮询次数，则继续轮询
             if (retries < maxRetries) {
                 retries++;
-                setTimeout(checkMergeStatus, 1000); // 每秒轮询一次
+                await sleep(1000)
+                return await checkMergeStatus(mergeRequestIid)
             } else {
                 console.log('已达到最大重试次数，合并检查失败。', mergeRequest.web_url);
             }
@@ -233,7 +235,7 @@ const mergeBranch = async () => {
             type: 'confirm',
             name: 'confirm',
             message: (answers) =>
-                `是否确认合并 ${targetBranch} into ${answers.targetBranch}?`,
+                `是否确认合并 ${currentBranch} into ${answers.targetBranch}?`,
         },
     ]);
     if (!confirm) {
@@ -241,30 +243,20 @@ const mergeBranch = async () => {
         return;
     }
     // 检查是否已包含主分支内容
-    const isMerged = await checkBranchMerged(gitlab, project.id, currentBranch, mainBranch);
+    const isMerged = await checkBranchMerged(gitlab, project.id, mainBranch,currentBranch );
     if (!isMerged) {
         // console.log(`主分支${mainBranch}未被合并，请先合并主分支到当前分支${currentBranch}`);
         return;
     }
 
-    // 检查是否有冲突
-    const hasConflicts = await checkMergeConflicts(gitlab, project.id, currentBranch, targetBranch);
-    if (hasConflicts) {
-        // console.log(`${currentBranch}与${targetBranch}有冲突，请先解决后重试`);
-        return;
-    }
 
     const mergeTitle = getMergeTitleByBranch(currentBranch)
     try {
-        const mergeCreate = await gitlab.MergeRequests.create(project.id, {
-            source_branch: currentBranch,
-            target_branch: targetBranch,
-            title: mergeTitle,
+        const mergeCreate = await gitlab.MergeRequests.create(project.id, currentBranch,targetBranch,mergeTitle,{
             remove_source_branch: false, // 如果需要合并后删除源分支，设为 true
         });
 
         await checkMergeStatus(mergeCreate.iid)
-        console.log(`合并成功: ${mergeCreate.web_url}`);
     } catch (error) {
         console.error('Failed to create merge request:', error.response?.data || error.message);
     }
@@ -307,4 +299,5 @@ const createBranch = async () => {
 }
 
 
-createBranch()
+// createBranch()
+mergeBranch()
