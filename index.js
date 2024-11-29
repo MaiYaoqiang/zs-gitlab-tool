@@ -251,6 +251,7 @@ const mergeBranch = async () => {
 
 
     const mergeTitle = getMergeTitleByBranch(currentBranch)
+    console.log("合并标题：",mergeTitle)
     try {
         const mergeCreate = await gitlab.MergeRequests.create(project.id, currentBranch,targetBranch,mergeTitle,{
             remove_source_branch: false, // 如果需要合并后删除源分支，设为 true
