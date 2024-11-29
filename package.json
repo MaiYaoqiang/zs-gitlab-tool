@@ -1,0 +1,24 @@
+{
+  "name": "zs-gitlab-tool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "bin": {
+    "zsgit": "./index.js"
+  },
+  "keywords": [
+    "中视",
+    "gitlab",
+    "tool"
+  ],
+  "author": "Maiyaoqiang",
+  "license": "ISC",
+  "dependencies": {
+    "@gitbeaker/node": "^35.8.1",
+    "inquirer": "^8.0.0"
+  }
+}
