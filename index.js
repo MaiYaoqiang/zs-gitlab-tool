@@ -306,9 +306,5 @@ const createBranch = async () => {
     }
 }
 
-const deleteBranch = () => {
-
-}
-
 
 createBranch()
