@@ -324,3 +324,5 @@ const main = async () => {
         console.log('退出');
     }
 }
+
+main()
