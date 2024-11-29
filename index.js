@@ -122,7 +122,7 @@ async function checkBranchMerged(gitlab, projectId, sourceBranch, targetBranch) 
 // 检查是否有冲突
 async function checkMergeConflicts(gitlab, projectId, sourceBranch, targetBranch) {
     try {
-        await gitlab.MergeRequests.create(projectId, sourceBranch,targetBranch,'Temporary MR for conflict checking',{
+        await gitlab.MergeRequests.create(projectId, sourceBranch, targetBranch, 'Temporary MR for conflict checking', {
             dry_run: true, // 仅模拟合并请求，不实际创建
         });
         console.log(`✅ ${sourceBranch} 和 ${targetBranch}无冲突`);
@@ -154,6 +154,7 @@ async function getMainBranchFromGitLab() {
 const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 };
+
 // 定义轮询查询的函数
 async function checkMergeStatus(mergeRequestIid) {
     const maxRetries = 10; // 最大轮询次数
@@ -243,7 +244,7 @@ const mergeBranch = async () => {
         return;
     }
     // 检查是否已包含主分支内容
-    const isMerged = await checkBranchMerged(gitlab, project.id, mainBranch,currentBranch );
+    const isMerged = await checkBranchMerged(gitlab, project.id, mainBranch, currentBranch);
     if (!isMerged) {
         // console.log(`主分支${mainBranch}未被合并，请先合并主分支到当前分支${currentBranch}`);
         return;
@@ -251,9 +252,9 @@ const mergeBranch = async () => {
 
 
     const mergeTitle = getMergeTitleByBranch(currentBranch)
-    console.log("合并标题：",mergeTitle)
+    console.log("合并标题：", mergeTitle)
     try {
-        const mergeCreate = await gitlab.MergeRequests.create(project.id, currentBranch,targetBranch,mergeTitle,{
+        const mergeCreate = await gitlab.MergeRequests.create(project.id, currentBranch, targetBranch, mergeTitle, {
             remove_source_branch: false, // 如果需要合并后删除源分支，设为 true
         });
 
@@ -300,5 +301,26 @@ const createBranch = async () => {
 }
 
 
-// createBranch()
-mergeBranch()
+const main = async () => {
+    const answers = await inquirer.prompt([
+        {
+            type: 'list',  // 类型是 'list'，表示让用户从选项中选择
+            name: 'action',  // 选项的名称
+            message: '请选择操作:',  // 提示文本
+            choices: [
+                '创建分支',  // 选项 1
+                '合并分支',  // 选项 2
+                '退出',  // 选项 3
+            ],
+        },
+    ]);
+    console.log(`你选择了: ${answers.action}`);
+    // 根据选择的操作执行不同的逻辑
+    if (answers.action === '创建分支') {
+        createBranch()
+    } else if (answers.action === '合并分支') {
+        mergeBranch()
+    } else {
+        console.log('退出');
+    }
+}
