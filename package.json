@@ -19,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "@gitbeaker/node": "^35.8.1",
+    "dayjs": "^1.11.13",
     "inquirer": "^8.0.0"
   }
 }
