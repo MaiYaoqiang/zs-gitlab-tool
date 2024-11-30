@@ -112,7 +112,7 @@ const useGitlab = async () => {
 async function checkBranchMerged(gitlab, projectId, sourceBranch, targetBranch) {
     const diff = await gitlab.Repositories.compare(projectId, targetBranch, sourceBranch);
     if (diff.commits.length > 0) {
-        console.log(`❗️ ${sourceBranch} 未合并 ${targetBranch}. 请先合并 ${targetBranch} 到 ${sourceBranch}`);
+        console.log(`❗️ ${targetBranch} 未合并 ${sourceBranch}. 请先合并 ${targetBranch} 到 ${sourceBranch}`);
         return false;
     }
     console.log(`✅ ${sourceBranch} 已校验合并 ${targetBranch}.`);
