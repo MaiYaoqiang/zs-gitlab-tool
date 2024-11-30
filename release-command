@@ -1,0 +1,4 @@
+npm run release
+npm run delete-registry
+npm publish
+npm run reset-registry

@@ -6,7 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "release": "release-it",
-    "publish": "npm publish",
     "delete-registry": "npm config delete registry",
     "reset-registry": "npm config set registry https://registry.npmmirror.com"
   },
