@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "release-it && npm run publish",
+    "publish": "npm config delete registry && npm publish && npm config set registry https://registry.npmmirror.com"
   },
   "type": "module",
   "bin": {
@@ -24,5 +26,15 @@
   },
   "devDependencies": {
     "release-it": "^17.10.0"
+  },
+  "release-it": {
+    "npm": {
+      "publish": false
+    },
+    "git": {
+      "push": false,
+      "tagName": "v${version}",
+      "commitMessage": "chore: release v${version}"
+    }
   }
 }
