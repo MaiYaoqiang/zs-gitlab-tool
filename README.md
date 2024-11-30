@@ -15,5 +15,5 @@ zsgit
 ### 5.首次运行时会要求输入gitlab地址和token(令牌)，请按照提示输入，输入完成后会生成配置文件，下次运行时直接使用zsgit即可
 #### 5.1令牌生成地址：https://git.gdzskj.ltd/-/user_settings/personal_access_tokens
 #### 5.2需要特别注意，令牌权限请选择：api，read_user
-![](assets/guide_1.jpg)
-![](assets/guide_2.jpg)
+![](./assets/guide_1.jpg)
+![](./assets/guide_2.jpg)
