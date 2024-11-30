@@ -17,3 +17,4 @@ zsgit
 #### 5.2需要特别注意，令牌权限请选择：api，read_user
 ![](./assets/guide_1.jpg)
 ![](./assets/guide_2.jpg)
+### 6.[查看使用示例](https://images.gdzskj.tech/uvzv7BgJlA.mp4)
