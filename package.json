@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "release": "release-it && npm run publish",
-    "publish": "npm config delete registry && npm publish && npm config set registry https://registry.npmmirror.com"
+    "publish": "npm publish",
+    "delete-registry": "npm config delete registry",
+    "reset-registry": "npm config set registry https://registry.npmmirror.com"
   },
   "type": "module",
   "bin": {
