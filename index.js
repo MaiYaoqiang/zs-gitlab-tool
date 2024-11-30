@@ -283,7 +283,7 @@ const mergeBranch = async () => {
 }
 
 const createBranch = async () => {
-    const {gitlab, project, projectPath} = await useGitlab()
+    const {gitlab, project, projectPath,user} = await useGitlab()
     const defaultBranch = await getMainBranchFromGitLab()
     // 询问用户是否使用默认分支创建
     const {targetBranch, feiShuId, desc} = await inquirer.prompt([
@@ -307,7 +307,8 @@ const createBranch = async () => {
     ]);
 
     const timeStr = dayjs().format('YYYYMMDD')
-    const newBranchName = `feature-myq-${timeStr}-${desc ? `${desc}-` : ''}m-${feiShuId}`
+    const associationStr = feiShuId.split(",").filter(item => item).map(item => `m-${item}`).join(",")
+    const newBranchName = ["feature", user.username, timeStr, desc, associationStr].filter(item => item).join('-')
     try {
         // 创建分支
         const branch = await gitlab.Branches.create(projectPath, newBranchName, targetBranch);
