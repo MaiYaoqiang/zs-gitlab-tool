@@ -309,14 +309,28 @@ const createBranch = async () => {
     const timeStr = dayjs().format('YYYYMMDD')
     const associationStr = feiShuId.split(",").filter(item => item).map(item => `m-${item}`).join(",")
     const newBranchName = ["feature", user.username, timeStr, desc, associationStr].filter(item => item).join('-')
+
     try {
-        // 创建分支
-        const branch = await gitlab.Branches.create(projectPath, newBranchName, targetBranch);
-        console.log(`基于 ${targetBranch} 分支创建 ${newBranchName} 创建成功，。`);
+        // 尝试查询目标分支是否存在
+        await gitlab.Branches.show(projectPath, newBranchName);
+        console.log(`分支 ${newBranchName} 已存在，跳过创建。`);
         syncAndCheckout(newBranchName)
-        // console.log(`新分支信息:`, branch);
     } catch (error) {
-        console.error('创建分支失败:', error.message);
+        if (error.message === '404 Not Found') {
+            // 分支不存在，执行创建操作
+            try {
+                // 创建分支
+                const branch = await gitlab.Branches.create(projectPath, newBranchName, targetBranch);
+                console.log(`基于 ${targetBranch} 分支创建 ${newBranchName} 创建成功，。`);
+                syncAndCheckout(newBranchName)
+                // console.log(`新分支信息:`, branch);
+            } catch (error) {
+                console.error('创建分支失败:', error.message);
+            }
+        } else {
+            // 其他错误
+            console.error('查询分支失败:', error.message);
+        }
     }
 }
 
