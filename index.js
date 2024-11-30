@@ -221,6 +221,24 @@ const getMergeTitleByBranch = (branch) => {
 
 }
 
+function syncAndCheckout(branchName) {
+    // Change directory to the repository path
+    const command = `git fetch origin && git checkout ${branchName} && git pull origin ${branchName}`;
+
+    exec(command, (err, stdout, stderr) => {
+        if (err) {
+            console.error(`Error: ${err.message}`);
+            return;
+        }
+        if (stderr) {
+            console.error(`stderr: ${stderr}`);
+            return;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.log('切换分支成功!');
+    });
+}
+
 const mergeBranch = async () => {
     const {gitlab, project, projectPath, currentBranch} = await useGitlab()
     const mainBranch = await getMainBranchFromGitLab();
@@ -294,6 +312,7 @@ const createBranch = async () => {
         // 创建分支
         const branch = await gitlab.Branches.create(projectPath, newBranchName, targetBranch);
         console.log(`基于 ${targetBranch} 分支创建 ${newBranchName} 创建成功，。`);
+        syncAndCheckout(newBranchName)
         // console.log(`新分支信息:`, branch);
     } catch (error) {
         console.error('创建分支失败:', error.message);
