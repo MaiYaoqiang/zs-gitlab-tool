@@ -35,15 +35,20 @@ function promptUserForConfig() {
 }
 
 let getConfig = async () => {
-    fs.existsSync(configFile)
-    const config = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
-    // 检查配置文件
-    if (config && config.token && config.gitlabAddress) {
-        getConfig = async () => {
+    const hasConfig = fs.existsSync(configFile)
+    if(hasConfig){
+        const config = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
+        // 检查配置文件
+        if (config && config.token && config.gitlabAddress) {
+            getConfig = async () => {
+                return config
+            }
             return config
+        } else {
+            console.log('未找到配置文件，请先配置');
+            return await promptUserForConfig();
         }
-        return config
-    } else {
+    }else{
         console.log('未找到配置文件，请先配置');
         return await promptUserForConfig();
     }
