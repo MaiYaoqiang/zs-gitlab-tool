@@ -346,7 +346,8 @@ const main = async () => {
             choices: [
                 '创建分支',  // 选项 1
                 '合并分支',  // 选项 2
-                '退出',  // 选项 3
+                '修改配置',  // 选项 3
+                '退出',  // 选项
             ],
         },
     ]);
@@ -356,6 +357,8 @@ const main = async () => {
         createBranch()
     } else if (answers.action === '合并分支') {
         mergeBranch()
+    } else if (answers.action === '修改配置') {
+        promptUserForConfig()
     } else {
         console.log('退出');
     }
