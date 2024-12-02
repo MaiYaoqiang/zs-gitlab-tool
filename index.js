@@ -36,7 +36,7 @@ function promptUserForConfig() {
 
 let getConfig = async () => {
     const hasConfig = fs.existsSync(configFile)
-    if(hasConfig){
+    if (hasConfig) {
         const config = JSON.parse(fs.readFileSync(configFile, 'utf-8'));
         // 检查配置文件
         if (config && config.token && config.gitlabAddress) {
@@ -48,7 +48,7 @@ let getConfig = async () => {
             console.log('未找到配置文件，请先配置');
             return await promptUserForConfig();
         }
-    }else{
+    } else {
         console.log('未找到配置文件，请先配置');
         return await promptUserForConfig();
     }
@@ -288,7 +288,7 @@ const mergeBranch = async () => {
 }
 
 const createBranch = async () => {
-    const {gitlab, project, projectPath,user} = await useGitlab()
+    const {gitlab, project, projectPath, user} = await useGitlab()
     const defaultBranch = await getMainBranchFromGitLab()
     // 询问用户是否使用默认分支创建
     const {targetBranch, feiShuId, desc} = await inquirer.prompt([
@@ -336,6 +336,8 @@ const createBranch = async () => {
 
 
 const main = async () => {
+    const {user} = await useGitlab()
+    // console.log(user.username)
     const answers = await inquirer.prompt([
         {
             type: 'list',  // 类型是 'list'，表示让用户从选项中选择
